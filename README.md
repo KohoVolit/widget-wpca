@@ -29,11 +29,10 @@ Example of resource:
   ...],
 "vote_events": [
   {"motion:name": "Motion 1", "start_date": "2011-11-04", "id": "13"}, 
-  ...
-  ],
+  ...],
 "people": [
   {"name": "Michelle", "party": "Fairies", "id": "1"},
-  ...
+  ...]
 ]}
 ```
 
