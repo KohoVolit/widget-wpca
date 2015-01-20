@@ -45,6 +45,7 @@ if (isset($_GET['party_set'])) {
     $r = json_decode(file_get_contents($url,false,$context));
 
     $abbr2row = [];
+
     foreach ($r->data as $row) {
         $abbr2row[$row->abbreviation] = $row;
     }
@@ -99,7 +100,7 @@ $dim2 = $r->data->dim2;
 if (isset($_GET['dim1']))
     $dim1 = $_GET['dim1'];
 if (isset($_GET['dim2']))
-    $dim1 = $_GET['dim2'];
+    $dim2 = $_GET['dim2'];
 
 // template
 $html = file_get_contents('widget.tpl');
