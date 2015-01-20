@@ -7,6 +7,8 @@ Widget for calculation of WPCA and creation of its chart, possibly with the cutt
 
 The visualization is a [D3 reusable chart](http://bost.ocks.org/mike/chart/), which may be used separately.
 
+**Important note**: The calculation takes long time, therefore the widget should be cached.
+
 ## Requirements
 Python3  
 R: (needs to be set correct path in `wpca_script.r`, line `library("reshape2", ...` ;TBD**)  
