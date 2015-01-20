@@ -23,7 +23,8 @@ Another attribute of `people` are *semi-optional* (they are required unless `par
 
 Example of resource:
 ```json
-{"votes": [
+{
+"votes": [
   {"voter_id": "1", "option": "yes", "vote_event_id": "13"},
   {"voter_id": "2", "option": "abstain", "vote_event_id": "13"},
   ...],
@@ -33,7 +34,7 @@ Example of resource:
 "people": [
   {"name": "Michelle", "party": "Fairies", "id": "1"},
   ...]
-]}
+}
 ```
 
 ### lang (optional)
