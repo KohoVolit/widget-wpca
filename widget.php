@@ -8,8 +8,10 @@ else
 if (isset($_GET['modulo']) and $_GET['modulo'])
     $chunk3 = ' ' . $_GET['modulo'];
 else
-    $chunk3 = '';    
+    $chunk3 = ''; 
+
 $command = escapeshellcmd('python3 wpca.py ' . $_GET['resource'] . $chunk2 . $chunk3);
+
 $wpca = json_decode(shell_exec($command));
 
 // delete 0s cutting lines
