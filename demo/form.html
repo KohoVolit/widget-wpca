@@ -18,13 +18,13 @@
              $('#resource').val("");
         });
         $(function() {
-             $('#hemicycle-form').submit( function() {
+             $('#wpca-form').submit( function() {
                  $("#resource").val(function() {
                     //recognize localhost for testing:
                     if (document.URL.indexOf("localhost") > -1)
-                        return "http://localhost/michal/project/widget-wpca/examples/csv2json.php?url=" + encodeURIComponent($("#resource").val()) + "&encoding=" + encodeURIComponent($('input[name=file-encoding]:checked', '#hemicycle-form').val())
+                        return "http://localhost/cgi-bin/wpca/load_datapackage.cgi?datapackage=" + encodeURIComponent($("#resource").val())
                     else
-                         return "http://test.kohovolit.sk/m/dev/widget-hemicycle/examples/csv2json.php?url=" + encodeURIComponent($("#resource").val()) + "&encoding=" + encodeURIComponent($('input[name=file-encoding]:checked', '#hemicycle-form').val())
+                         return "http://test.kohovolit.sk/cgi-bin/wpca/load_datapackage.cgi?datapackage=" + encodeURIComponent($("#resource").val())
                     }
                  );
                  return true;
@@ -42,7 +42,7 @@
                     }, 2000);
                 }, 1000);
             });
-            $("#example-2").click(function() {
+            /*$("#example-2").click(function() {
                 $("#resource").val($('#example-2-link').prop('href'));
                 $('input[name="party_set"][value="cz"]').prop('checked', true);
                 $('#orloj_rows').val(2);
@@ -54,7 +54,7 @@
                         scrollTop: $("#submit").offset().top
                     }, 2000);
                 }, 1000);
-            });
+            });*/
         });
     </script>
     
@@ -63,7 +63,7 @@
         <div class="container-fluid">
             <div class="navbar-header">
               <a class="navbar-brand" href="#">
-                Hemicycle Chart Generator <small>for a single vote event</small> <span class="badge bg-info">demo</span>
+                WPCA Chart Generator <small>...</small> <span class="badge bg-info">demo</span>
               </a>
             </div>
         </div>
@@ -73,12 +73,12 @@
         <div class="pull-right">
             <img src="https://raw.githubusercontent.com/KohoVolit/widget-hemicycle/master/examples/example.png" alt="Hemicycle example"/>
          </div>
-         <h1>Hemicycle Chart Generator <small>for a single vote event</small> <span class="badge bg-info">demo</span></h1>
-         <p>Generate splendid <a href="http://www.popoloproject.com/specs/vote-event.html">vote events</a> visualizations in a minute.</p>
-         <p>This form uses <a href="https://github.com/KohoVolit/widget-hemicycle/">this Hemicycle widget</a>.</p> 
+         <h1>WPCA Chart Generator <small>...</small> <span class="badge bg-info">demo</span></h1>
+         <p>Generate splendid <a href="https://gist.github.com/michalskop/8514867">WPCA</a> visualizations in a minute.</p>
+         <p>This form uses <a href="https://github.com/KohoVolit/widget-wpca">this WPCA widget</a>.</p> 
      </div>
 
-     <form action="../widget.php" id="hemicycle-form">
+     <form action="../widget.php" id="wpca-form">
         
         <!-- resource -->
         <h3>CSV Resource <small>resource (part of)</small></h3>
@@ -113,8 +113,8 @@
         <!-- /resource -->
 
         <!-- encoding -->
-        <h3>Encoding of the resource <small>resource (part of)</small></h3>
-        <p>Encoding of the CSV resource.</p>
+        <h3>Encoding of the files <small>resource (part of)</small></h3>
+        <p>Encoding of the CSV files.</p>
         <div class="radio">
           <label>
             <input type="radio" name="file-encoding" id="encoding1" value="utf-8" checked> UTF-8 <code>utf-8</code>
@@ -159,27 +159,52 @@
             Czech <code>cz</code>
           </label>
         </div>
-        <p class="alert alert-warning">Warning: One of the following must be true -  <code>party_set</code> is set, or the resource must contain <code>color</code> and <code>position</code> for each person.</p>
+        <p class="alert alert-warning">Warning: One of the following must be true -  <code>party_set</code> is set, or the resource must contain <code>color</code> for each person.</p>
         <!-- /party_set -->
         
-        <!-- orloj_rows -->
-        
-        <!-- /orloj_rows -->        
-        <h3>Number of rows in orloj <small>orloj_rows</small></h3>
-        <p>Number of rows in the <em>orloj</em> part of the legend.</p>
-        <div class="form-group">
-            <label for="orloj_rows">Number of rows in orloj: </label>
-            <input type="number" id="orloj_rows" name="orloj_rows" value="1">
+       <!-- cl -->
+        <h3>Cutting lines <small>cl</small></h3>
+        <p>Whether the cutting lines should be generated, too.</p>
+        <div class="radio">
+          <label>
+            <input type="radio" name="cl" id="cl1" value="0" checked>No <code>0</code>
+          </label>
         </div>
+        <div class="radio">
+          <label>
+            <input type="radio" name="cl" id="cl2" value="1">Yes <code>1</code>
+          </label>
+        </div>
+        <p class="alert alert-info">Info: Calculation of the cutting lines may be time consuming.</p>
+        <!-- /cl -->
+        
+        <!-- modulo -->
+        <h3>Subset of cutting lines <small>modulo</small></h3>
+        <p>Only each n-th cutting may be calculated and shown</p>
+        <div class="form-group">
+            <label for="modulo">Calculate only each n-th catting line: </label>
+            <input type="number" id="modulo" name="modulo" value="10">
+        </div>
+        <p class="alert alert-info">Info: Higher number reduces time of calculation and may improve readability of the chart in some cases.</p>
+        <!-- /modulo --> 
+        
         <!-- width -->
         <h3>Width <small>width</small></h3>
         <p>Width of the vizualization</p>
         <div class="form-group">
             <label for="width">Width (px): </label>
-            <input type="number" id="width" name="width" value="400">
+            <input type="number" id="width" name="width" value="600">
         </div>
-        <p class="alert alert-info">Note: The total <em>height</em> of the visualization is: <code>width * (1/2 + 1/8 + orloj_rows*1/16)</code></p>
         <!-- /width --> 
+        
+        <!-- height -->
+        <h3>Height <small>height</small></h3>
+        <p>Height of the vizualization
+        <div class="form-group">
+            <label for="height">Height (px): </label>
+            <input type="number" id="height" name="height" value="400">
+        </div>
+        <!-- /height --> 
         
         <!-- format -->
         <h3>Format of the visualization <small>format</small></h3>

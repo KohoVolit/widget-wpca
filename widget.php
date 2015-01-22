@@ -1,16 +1,19 @@
 <?php
 
 // run WPCA on resource
-if (isset($_GET['cl']) and $_GET['cl'])
+if (isset($_GET['cl']) and $_GET['cl']) {
     $chunk2 = ' yes';
-else
+    if (isset($_GET['modulo']) and $_GET['modulo'])
+        $chunk3 = ' ' . $_GET['modulo'];
+    else
+        $chunk3 = ''; 
+}
+else {
     $chunk2 = '';  
-if (isset($_GET['modulo']) and $_GET['modulo'])
-    $chunk3 = ' ' . $_GET['modulo'];
-else
     $chunk3 = ''; 
+}
 
-$command = escapeshellcmd('python3 wpca.py ' . $_GET['resource'] . $chunk2 . $chunk3);
+$command = escapeshellcmd('python3 wpca.py ' . urldecode($_GET['resource']) . $chunk2 . $chunk3);
 
 $wpca = json_decode(shell_exec($command));
 
