@@ -27,7 +27,7 @@ lo_limit = .1
 # reorder data; divisions x persons
 # we may need to install and/or load some additional libraries
 # install.packages("reshape2")
- library("reshape2", lib.loc="/home/michal/R/x86_64-pc-linux-gnu-library/3.1")
+ library("reshape2", lib.loc=c("/home/michal/R/x86_64-pc-linux-gnu-library/3.1","/usr/local/lib/R/site-library"))
 # install.packages("sqldf")
 # library("sqldf")
 

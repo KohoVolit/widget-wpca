@@ -3,6 +3,12 @@
 
 # calling: http://localhost/cgi-bin/wpca/load_datapackage.cgi?datapackage=/home/michal/dev/wpca/praha_2010-2014/datapackage.json
 
+# notes: http://httpd.apache.org/docs/2.2/howto/cgi.html
+# nano /etc/apache2/sites-enabled/000-default.conf
+# or nano /etc/apache2/sites-available/test.kohovolit.sk.conf
+# set proper rigths
+# ln
+
 #print("Content-Type: text/html;charset=utf-8")
 #print()
 
