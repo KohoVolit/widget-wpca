@@ -15,7 +15,12 @@
 
     <script>
         $(function() {
-             $('#resource').val("");
+            if (document.URL.indexOf("localhost") > -1)
+                        str = decodeURIComponent($('#resource').val()).replace("http://localhost/cgi-bin/wpca/load_datapackage.cgi?datapackage=","")
+                    else
+                         str = decodeURIComponent($('#resource').val()).replace( "http://test.kohovolit.sk/cgi-bin/wpca/load_datapackage.cgi?datapackage=","")
+
+            $('#resource').val(str);
         });
         $(function() {
              $('#wpca-form').submit( function() {
@@ -63,7 +68,7 @@
         <div class="container-fluid">
             <div class="navbar-header">
               <a class="navbar-brand" href="#">
-                WPCA Chart Generator <small>...</small> <span class="badge bg-info">demo</span>
+                W-PCA Chart Generator <small>...</small> <span class="badge bg-info">demo</span>
               </a>
             </div>
         </div>
@@ -71,11 +76,11 @@
     <div class="container">
      <div class="page-header">
         <div class="pull-right">
-            <img src="https://raw.githubusercontent.com/KohoVolit/widget-hemicycle/master/examples/example.png" alt="Hemicycle example"/>
+            <img src="https://raw.githubusercontent.com/KohoVolit/widget-wpca/master/examples/scatterplot-chart.png" alt="Hemicycle example"/>
          </div>
-         <h1>WPCA Chart Generator <small>...</small> <span class="badge bg-info">demo</span></h1>
-         <p>Generate splendid <a href="https://gist.github.com/michalskop/8514867">WPCA</a> visualizations in a minute.</p>
-         <p>This form uses <a href="https://github.com/KohoVolit/widget-wpca">this WPCA widget</a>.</p> 
+         <h1>W-PCA Chart Generator <small>...</small> <span class="badge bg-info">demo</span></h1>
+         <p>Generate splendid <a href="https://gist.github.com/michalskop/8514867">W-PCA</a> visualizations in a minute.</p>
+         <p>This form uses <a href="https://github.com/KohoVolit/widget-wpca">this W-PCA widget</a>.</p>  https://docs.google.com/document/d/12oXJUjXieg8oyUZs5HlEGquCuh9uacu8rqgvBQqHM1E/pub
      </div>
 
      <form action="../widget.php" id="wpca-form">
@@ -227,6 +232,21 @@
           </label>
         </div>        
         <!-- /format --> 
+
+       <!-- nocache -->
+        <h3>Force recalculation <small>nocache</small></h3>
+        <p>Normally, the calculated chart is cached. You may force recalculation.</p>
+        <div class="radio">
+          <label>
+            <input type="radio" name="nocache" id="nocache1" value="" checked>No, cache is fine
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+            <input type="radio" name="nocache" id="nocache2" value="1">Yes, recalculate <code>1</code>
+          </label>
+        </div>
+        <!-- /nocache -->
         
         <button type="submit" class="btn btn-primary btn-lg btn-block" id="submit"><strong>Create Chart!</strong></button>     
      </form>

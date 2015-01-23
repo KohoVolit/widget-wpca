@@ -1,21 +1,25 @@
 <!DOCTYPE html>
-<html lang={_LANG}>
+<html lang="{_LANG}">
   <head>
     <meta charset="utf-8">
     <title>Scatterplot Chart</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="scatter plot">
+    <meta name="description" content="WPCA scatter plot">
     <meta name="author" content="Michal Škop">
+
+    <meta property="og:image" content="{_OG_IMAGE}"/>
+	<meta property="og:title" content="WPCA scatter plot"/>
+	<meta property="og:url" content="http://kohovolit.eu"/>
+	<meta property="og:site_name" content="WPCA scatter plot"/>
+	<meta property="og:type" content="website"/>
+	
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="./d3.scatterplotwithlineplot.js"></script>
     <script src="./d3.tips.js"></script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/simplex/bootstrap.min.css" />
+
     <style type="text/css">
 			
-			text {
-			  font-family: sans-serif;
-			}
-			
+			/* note: we duplicate some of the styles (css, and as attributes of svg elements), so FF displays it correctly, and it is possible to generate png */
 			.tick {
 			  fill-opacity: 0;
 			  stroke: #000000;
@@ -40,10 +44,6 @@
 				font-family: sans-serif;
 				font-size: 11px;
 				stroke: gray;
-			}
-			circle {
-			  fill-opacity: .3;
-			  stroke-opacity: 0.99;
 			}
 			circle:hover {
 			  fill-opacity: 1;
@@ -165,7 +165,43 @@ var scatter = svg.selectAll(".scatterplot")
     .append("svg:g")
     .attr("transform", "translate(" + scatterplotwithlineplot[0].margin.left + "," + scatterplotwithlineplot[0].margin.top + ")")
     .call(sp);
-    
+</script>
+<!-- creates svg and png pictures (using create_png.php) -->
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/md5.js"></script>
+<script>
+    $(document).ready(function () {
+        postdata = {'url':CryptoJS.MD5(window.location.href).toString(), 'svg':$('#chart').html().replace(/<strong>/g,'').replace(/<\/strong>/g,'').replace(/<br>/g,''), 'nocache': getParameterByName('nocache')};
+        $.post('create_png.php',postdata);
+        nothing = 0;
+        //redirects to it when svg and png are ready
+        if (($.inArray(getParameterByName('format'),['png','svg'])) > -1)
+            get_picture();
+    });
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+    function get_picture() {
+        var i = 0;
+        $.ajax('cache/{_FORMAT}/' + CryptoJS.MD5(window.location.href).toString() + '.{_FORMAT}', {
+            statusCode: {
+              200: function (response) {
+                 location.href = 'cache/{_FORMAT}/' + CryptoJS.MD5(window.location.href).toString() + '.{_FORMAT}';
+              },
+              404: function(response) {
+                i++;
+                if (i < 60) {
+                  setTimeout(get_picture, 1000)
+                } else {
+                    alert('Something wrong, giving up...');
+                }
+              }
+            }
+        });
+    }
 </script>
   </body>
 </html>

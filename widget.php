@@ -1,132 +1,168 @@
 <?php
 
-// run WPCA on resource
-if (isset($_GET['cl']) and $_GET['cl']) {
-    $chunk2 = ' yes';
-    if (isset($_GET['modulo']) and $_GET['modulo'])
-        $chunk3 = ' ' . $_GET['modulo'];
-    else
+#$start = microtime(true);
+//cache
+if ((!isset($_GET['nocache'])) or (!$_GET['nocache'])) {
+    $file_name = 'cache/html/' . md5(curPageURL());
+    $time  = time();
+    if (is_readable($file_name) and ($time - filemtime($file_name) < 60*60*24*365)) // 1 year
+        $cache = true;
+    else 
+        $cache = false;
+} else
+    $cache = false;
+
+if ($cache) {
+    $html = file_get_contents('cache/html/' . md5(curPageURL()));
+    echo $html;
+} else {
+
+    // run WPCA on resource
+    if (isset($_GET['cl']) and $_GET['cl']) {
+        $chunk2 = ' yes';
+        if (isset($_GET['modulo']) and $_GET['modulo'])
+            $chunk3 = ' ' . $_GET['modulo'];
+        else
+            $chunk3 = ''; 
+    }
+    else {
+        $chunk2 = '';  
         $chunk3 = ''; 
-}
-else {
-    $chunk2 = '';  
-    $chunk3 = ''; 
-}
+    }
 
-$command = escapeshellcmd('python3 wpca.py ' . urldecode($_GET['resource']) . $chunk2 . $chunk3);
+    $command = escapeshellcmd('python3 wpca.py ' . urldecode($_GET['resource']) . $chunk2 . $chunk3);
 
-$wpca = json_decode(shell_exec($command));
+    $wpca = json_decode(shell_exec($command));
 
-// delete 0s cutting lines
-foreach ($wpca->vote_events as $k => $vote_event) {
-    if  ($vote_event->cl_beta0 == 0)
-        unset($wpca->vote_events[$k]);
-}
+    // delete 0s cutting lines
+    foreach ($wpca->vote_events as $k => $vote_event) {
+        if  ($vote_event->cl_beta0 == 0)
+            unset($wpca->vote_events[$k]);
+    }
 
-// note: http://stackoverflow.com/questions/3629504/php-file-get-contents-very-slow-when-using-full-url
-$context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
+    // note: http://stackoverflow.com/questions/3629504/php-file-get-contents-very-slow-when-using-full-url
+    $context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
 
-/* TEMPLATE */
-// defaults
-$defaults = [
-    'width' => 600,
-    'height' => 400
-];
-$current = [];
-foreach ($defaults as $k => $default) {
-    if (isset($_GET[$k]))
-        $current[$k] = $_GET[$k];
-    else
-        $current[$k] = $default;
-}
+    /* TEMPLATE */
+    // defaults
+    $defaults = [
+        'width' => 600,
+        'height' => 400
+    ];
+    $current = [];
+    foreach ($defaults as $k => $default) {
+        if (isset($_GET[$k]))
+            $current[$k] = $_GET[$k];
+        else
+            $current[$k] = $default;
+    }
 
-// p api
-$parties = get_parties($wpca->people);
+    // p api
+    $parties = get_parties($wpca->people);
 
-if (isset($_GET['party_set'])) {
-    $chunk = '&set=' . $_GET['party_set'];
-    $url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/papi/?' . http_build_query(['parties' => $parties]) . $chunk;
+    if (isset($_GET['party_set'])) {
+        $chunk = '&set=' . $_GET['party_set'];
+        $url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/papi/?' . http_build_query(['parties' => $parties]) . $chunk;
 
+        $r = json_decode(file_get_contents($url,false,$context));
+
+        $abbr2row = [];
+
+        foreach ($r->data as $row) {
+            $abbr2row[$row->abbreviation] = $row;
+        }
+        $parties = $r->data;
+        $wpca->people = add_attributes($wpca->people,$abbr2row);
+    } else {
+        $wpca->people = add_attributes($wpca->people,[]);
+    }
+
+    // width and height
+    $absmax = absmax($wpca->people);
+        //40: margins from scatterplot
+    if (2*$absmax['d1']/($current['width']-40) > 2*$absmax['d2']/($current['height']-40)) {
+        $xmax = min(1.1,$absmax['d1']*1.1);
+        $ymax = $xmax * ($current['height']-40)/($current['width']-40);
+    } else {
+        $ymax = min(1.1,$absmax['d2']*1.1);
+        $xmax = $ymax * ($current['width']-40)/($current['height']-40);
+    }
+
+    // rotation
+    if (isset($_GET['rotation'])) {
+        $ar = explode('|',$_GET['rotation']);
+        if (count($ar) == 1) {
+            $ar[1] = 1;
+            $ar[2] = 1;
+        }
+        $person = find_by_attr($ar[0],$wpca->people);
+        if ($person) {
+            $d1 = "wpca:d1";
+            $d2 = "wpca:d2";
+            if ($person->$d1 * $ar[1] < 0)
+                $wpca = rotatex($wpca);
+            if ($person->$d2 * $ar[2] < 0)
+                $wpca = rotatey($wpca);
+        }
+    }
+
+    //language / legend
+    if (isset($_GET['lang'])) {
+        $lang = $_GET['lang'];
+        $chunk = '&lang=' . $_GET['lang'];
+    } else {
+        $chunk = '';
+        $lang = 'en';
+    }
+    $url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/lapi/?' . $chunk;
     $r = json_decode(file_get_contents($url,false,$context));
-
-    $abbr2row = [];
-
-    foreach ($r->data as $row) {
-        $abbr2row[$row->abbreviation] = $row;
-    }
-    $parties = $r->data;
-    $wpca->people = add_attributes($wpca->people,$abbr2row);
-} else {
-    $wpca->people = add_attributes($wpca->people,[]);
-}
-
-// width and height
-$absmax = absmax($wpca->people);
-    //40: margins from scatterplot
-if (2*$absmax['d1']/($current['width']-40) > 2*$absmax['d2']/($current['height']-40)) {
-    $xmax = min(1.1,$absmax['d1']*1.1);
-    $ymax = $xmax * ($current['height']-40)/($current['width']-40);
-} else {
-    $ymax = min(1.1,$absmax['d2']*1.1);
-    $xmax = $ymax * ($current['width']-40)/($current['height']-40);
-}
-
-// rotation
-if (isset($_GET['rotation'])) {
-    $ar = explode('|',$_GET['rotation']);
-    if (count($ar) == 1) {
-        $ar[1] = 1;
-        $ar[2] = 1;
-    }
-    $person = find_by_attr($ar[0],$wpca->people);
-    if ($person) {
-        $d1 = "wpca:d1";
-        $d2 = "wpca:d2";
-        if ($person->$d1 * $ar[1] < 0)
-            $wpca = rotatex($wpca);
-        if ($person->$d2 * $ar[2] < 0)
-            $wpca = rotatey($wpca);
-    }
-}
-
-//language / legend
-if (isset($_GET['lang'])) {
-    $lang = $_GET['lang'];
-    $chunk = '&lang=' . $_GET['lang'];
-} else {
-    $chunk = '';
-    $lang = 'en';
-}
-$url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/lapi/?' . $chunk;
-$r = json_decode(file_get_contents($url,false,$context));
-$dim1 = $r->data->dim1;
-$dim2 = $r->data->dim2;
-    //possibly overwrite
-if (isset($_GET['dim1']))
-    $dim1 = $_GET['dim1'];
-if (isset($_GET['dim2']))
-    $dim2 = $_GET['dim2'];
-
-// template
-$html = file_get_contents('widget.tpl');
-$replace = [
-  '{_LINES}' => $wpca->vote_events,
-  '{_PEOPLE}' => $wpca->people,
-  '{_LABEL_DIM1}' => $dim1,
-  '{_LABEL_DIM2}' => $dim2,
-  '{_XMIN}' => -1*$xmax,
-  '{_XMAX}' => $xmax,
-  '{_YMIN}' => -1*$ymax,
-  '{_YMAX}' => $ymax,
-  '{_WIDTH}' => $current['width'],
-  '{_HEIGHT}' => $current['height'],
-  '{_LANG}' => $lang
-];
-foreach ($replace as $k => $r)
-    $html = str_replace($k,json_encode($r),$html);
+    $dim1 = $r->data->dim1;
+    $dim2 = $r->data->dim2;
+        //possibly overwrite
+    if (isset($_GET['dim1']))
+        $dim1 = $_GET['dim1'];
+    if (isset($_GET['dim2']))
+        $dim2 = $_GET['dim2'];
     
-echo $html;
+    //og:image (generated png)
+    $og_image = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/cache/png/' . md5(curPageURL()) . ".png";
 
+    /* TEMPLATE */
+    // template
+    $html = file_get_contents('widget.tpl');
+
+    $replace_jsonized = [
+      '{_LINES}' => $wpca->vote_events,
+      '{_PEOPLE}' => $wpca->people,
+      '{_LABEL_DIM1}' => $dim1,
+      '{_LABEL_DIM2}' => $dim2,
+      '{_XMIN}' => -1*$xmax,
+      '{_XMAX}' => $xmax,
+      '{_YMIN}' => -1*$ymax,
+      '{_YMAX}' => $ymax,
+      '{_WIDTH}' => $current['width'],
+      '{_HEIGHT}' => $current['height'],
+      '{_LANG}' => $lang
+    ];
+
+    foreach ($replace_jsonized as $k => $r)
+        $html = str_replace($k,json_encode($r),$html);
+
+    $replace = [
+      '{_LANG}' => $lang,
+#      '{_WIDGET_PICTURE}' => $widget_picture,
+      '{_OG_IMAGE}' => $og_image,
+    ];
+    foreach ($replace as $k => $r)
+        $html = str_replace($k,$r,$html);
+        
+    echo $html;
+    
+    //write to cache
+    file_put_contents('cache/html/' . md5(curPageURL()),$html);
+}
+#$t = (microtime(true) - $start);
+#echo "time: " . $t . "<br>\n";
 
 
 // FUNCTIONS
@@ -192,6 +228,17 @@ function get_parties ($data) {
     foreach ($list as $item)
         $out[] = $item;
     return $out;
+}
+
+function curPageURL() {
+ $pageURL = $_SERVER["REQUEST_SCHEME"];
+ $pageURL .= "://";
+ if ($_SERVER["SERVER_PORT"] != "80") {
+  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+ } else {
+  $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+ }
+ return $pageURL;
 }
 
 ?>

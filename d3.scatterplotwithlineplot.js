@@ -65,6 +65,7 @@ d3.scatterplotwithlineplot = function() {
         lines[k].path =[corners(lines[k],limits,way),corners(lines[k],limits,-1*way)];
       }
       
+      //lines
       var line = element.selectAll ('.line')
          .data(lines)
          .enter()
@@ -78,9 +79,15 @@ d3.scatterplotwithlineplot = function() {
 		   		if (typeof(d['class'] != 'undefined')) return d['class'];
 		   		else return 'line';
 		   })
+		    //putting it here and not in css, because it is used for generating png:
+		 .attr("stroke","gray")
+		 .attr("stroke-width","1")
+		 .attr("opacity", 0.15)
+		 
          .on('mouseover', tip.show)
          .on('mouseout', tip.hide);
       
+      //points
       element.selectAll(".circle")
         .data(data)
 		   .enter()
@@ -100,6 +107,7 @@ d3.scatterplotwithlineplot = function() {
 		   })
 		   .attr("fill",function(d) {return d.color})
 		   .attr("stroke",function(d) {return d.color})
+		   .attr("fill-opacity",0.33)
 		   .on('mouseover', tip.show)
            .on('mouseout', tip.hide);
 	
@@ -119,7 +127,37 @@ d3.scatterplotwithlineplot = function() {
 			.attr("transform", "rotate(-90)")
 			.text(axes['labels']['y']);
 			 
-		
+	    
+	  // putting it here and not in css, because it is used for generating png: 
+	  element.selectAll(".domain")
+	        	.attr("fill","none")
+				.attr("fill-opacity",0)
+				.attr("stroke","black")
+				.attr("stroke-width",1);
+      element.selectAll(".tick")
+                .attr("fill-opacity",0)
+                .attr("stroke","#000")
+                .attr("stroke-width",1);
+      element.selectAll("text")
+                .attr("font-family","sans-serif")
+                .attr("font-size",11)
+      element.selectAll(".label")
+                .attr("font-size",15)
+                .attr("font-weight","bold")
+                //convert dy("0.71em") to dy("10"), inkscape feature https://www.ruby-forum.com/topic/5505193 :
+      element.selectAll("text")
+                .attr("dy",function(d) {
+                    if (d3.select(this).attr("dy")) {
+                        em = parseFloat(d3.select(this).attr("dy").replace("em",""));
+                        if (d3.select(this).attr("font-size"))
+                            px = parseFloat(d3.select(this).attr("font-size"));
+                        else
+                            px = 11;
+                        return em*px + "px";
+                    } else {
+                        return 0;
+                    }
+                })
     });
   }
   scatterplotwithlineplot.data = function(value) {

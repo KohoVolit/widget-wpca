@@ -13,6 +13,7 @@ r=robjects.r
 url = sys.argv[1]
 req = requests.get(url)
 data = req.json()
+
 # reorder for easier access:
 people = {}
 for person in data["people"]:
