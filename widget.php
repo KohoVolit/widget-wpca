@@ -89,7 +89,7 @@ if ($cache) {
     }
 
     // rotation
-    if (isset($_GET['rotation'])) {
+    if (isset($_GET['rotation']) and ($_GET['rotation'] != 'no-rotation') and ($_GET['rotation'] != '')) {
         $ar = explode('|',$_GET['rotation']);
         if (count($ar) == 1) {
             $ar[1] = 1;
