@@ -2,14 +2,14 @@
 <html lang="{_LANG}">
   <head>
     <meta charset="utf-8">
-    <title>Scatterplot Chart</title>
+    <title>W-PCA Scatterplot Chart</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="WPCA scatter plot">
     <meta name="author" content="Michal Škop">
 
     <meta property="og:image" content="{_OG_IMAGE}"/>
 	<meta property="og:title" content="WPCA scatter plot"/>
-	<meta property="og:url" content="http://kohovolit.eu"/>
+	<meta property="og:url" content="{_OG_URL}"/>
 	<meta property="og:site_name" content="WPCA scatter plot"/>
 	<meta property="og:type" content="website"/>
 	
