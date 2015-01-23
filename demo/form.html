@@ -16,9 +16,9 @@
     <script>
         $(function() {
             if (document.URL.indexOf("localhost") > -1)
-                        str = decodeURIComponent($('#resource').val()).replace("http://localhost/cgi-bin/wpca/load_datapackage.cgi?datapackage=","")
+                        str = decodeURIComponent($('#resource').val()).replace("http://localhost/cgi-bin/wpca/load_datapackage.cgi?datapackage=","").replace(encodeURIComponent("http://localhost/cgi-bin/wpca/load_datapackage.cgi?datapackage=",""));
                     else
-                         str = decodeURIComponent($('#resource').val()).replace( "http://test.kohovolit.sk/cgi-bin/wpca/load_datapackage.cgi?datapackage=","")
+                         str = decodeURIComponent($('#resource').val()).replace( "http://test.kohovolit.sk/cgi-bin/wpca/load_datapackage.cgi?datapackage=","").replace(encodeURIComponent("http://test.kohovolit.sk/cgi-bin/wpca/load_datapackage.cgi?datapackage=",""));
 
             $('#resource').val(str);
         });
@@ -27,9 +27,9 @@
                  $("#resource").val(function() {
                     //recognize localhost for testing:
                     if (document.URL.indexOf("localhost") > -1)
-                        return "http://localhost/cgi-bin/wpca/load_datapackage.cgi?datapackage=" + encodeURIComponent($("#resource").val())
+                        return encodeURIComponent("http://localhost/cgi-bin/wpca/load_datapackage.cgi?datapackage=" + $("#resource").val())
                     else
-                         return "http://test.kohovolit.sk/cgi-bin/wpca/load_datapackage.cgi?datapackage=" + encodeURIComponent($("#resource").val())
+                         return encodeURIComponent("http://test.kohovolit.sk/cgi-bin/wpca/load_datapackage.cgi?datapackage=" + $("#resource").val())
                     }
                  );
                  return true;

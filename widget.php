@@ -1,5 +1,5 @@
 <?php
-
+//echo curPageURL();die();
 #$start = microtime(true);
 //cache
 if ((!isset($_GET['nocache'])) or (!$_GET['nocache'])) {
