@@ -46,6 +46,18 @@
                     $('html, body').animate({
                         scrollTop: $("#submit").offset().top
                     }, 2000);
+                    setTimeout(function() {
+                        $("#submit").button('toggle');
+                        setTimeout(function() {
+                          $("#submit").button('toggle');
+                          setTimeout(function() {
+                            $("#submit").button('toggle');
+                            setTimeout(function() {
+                                $("#submit").button('toggle');
+                            }, 350);
+                          }, 350);
+                        }, 350);
+                    }, 2000);
                 }, 1000);
             });
             window.onunload = function(){}; 
