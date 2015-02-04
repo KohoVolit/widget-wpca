@@ -93,7 +93,7 @@
               opacity: 0.5;
             }
             #chart {
-              margin-top:50px;
+              margin-top:100px;
             }
 		</style>
   </head>
