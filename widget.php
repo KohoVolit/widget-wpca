@@ -33,7 +33,7 @@ if ($cache) {
     $command = escapeshellcmd('python3 wpca.py ' . urldecode($_GET['resource']) . $chunk2 . $chunk3);
 
     $wpca = json_decode(shell_exec($command));
-
+#print_r($wpca);echo 'python3 wpca.py ' . urldecode($_GET['resource']) . $chunk2 . $chunk3;
     // delete 0s cutting lines
     foreach ($wpca->vote_events as $k => $vote_event) {
         if  ($vote_event->cl_beta0 == 0)

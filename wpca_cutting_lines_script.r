@@ -15,16 +15,16 @@ parameters = data.frame(matrix(0,nrow=dim(X)[1],ncol=3))
 colnames(parameters)=c("Parameter","Loss","Direction")
 
 # x-values
-xfull = Xproj[,1:n_first_dimensions]
+#xfull = Xproj[,1:n_first_dimensions]
 # unit x-values
-xfullu = Xproju[,1:n_first_dimensions]
+xfullu = X_proj_unit[,1:n_first_dimensions]
 
 #calculating all cutting lines
-for (i in as.numeric(1:dim(X)[1])) {
+for (i in as.numeric(1:dim(X_raw)[1])) {
 #for (i in (1:2)) {
     if ((i %% modulo) == 0) {
         beta = Xy[i,1:n_first_dimensions]
-        y = t(as.matrix(X[i,]))[,pI]
+        y = t(as.matrix(X_raw[i,]))[,person_I]
         x = xfullu[which(!is.na(y)),]
         y = y[which(!is.na(y))]
         zeros = as.matrix(rep(0,length(y)))

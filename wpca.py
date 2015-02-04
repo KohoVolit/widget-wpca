@@ -29,7 +29,7 @@ for row in data["votes"]:
     Xsourcevector.append(row["voter_id"])
     Xsourcevector.append(row["option"])
     
-robjects.globalenv["Xsourcevector"] = robjects.StrVector(Xsourcevector)
+robjects.globalenv["X_source_vector"] = robjects.StrVector(Xsourcevector)
 r.source("prepare_matrix.r")
 
 # calculate WPCA
@@ -39,10 +39,10 @@ r.source("wpca_script.r")
 wpca = {"people":[]}
 i = 0   # all people
 k = 0   # cutted people
-rXproj = numpy.array(robjects.globalenv['Xproju'])
-rXpeople = robjects.globalenv['Xpeople']
-rXvote_events = robjects.globalenv['Xvote_events']
-for item in robjects.globalenv['pI']:
+rXproj = numpy.array(robjects.globalenv['X_proj_unit'])
+rXpeople = robjects.globalenv['X_people']
+rXvote_events = robjects.globalenv['X_vote_events']
+for item in robjects.globalenv['person_I']:
     if item:
         it = {
             'id': people[rXpeople[i]]['id'],

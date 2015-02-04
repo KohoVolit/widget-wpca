@@ -92,6 +92,9 @@
               stroke-width:3;
               opacity: 0.5;
             }
+            #chart {
+              margin-top:50px;
+            }
 		</style>
   </head>
   <body>
