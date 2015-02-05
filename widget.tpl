@@ -61,7 +61,7 @@
                 color: #fff;
                 border-radius: 2px;
                 pointer-events: none;
-                max-width: 250px;
+                max-width: 400px;
             }
             /* Creates a small triangle extender for the tooltip */
             .d3-tip:after {

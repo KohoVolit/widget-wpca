@@ -1,5 +1,6 @@
 /* requires D3 + https://github.com/Caged/d3-tip */
 d3.scatterplotwithlineplot = function() {
+  unit_circle = true;
   function scatterplotwithlineplot(selection) {
     selection.each(function(d, i) {
       //options
@@ -8,7 +9,8 @@ d3.scatterplotwithlineplot = function() {
           margin = (typeof(margin) === "function" ? margin(d) : d.margin),
           axes = (typeof(axes) === "function" ? axes(d) : d.axes),
           minmax = (typeof(minmax) === "function" ? minmax(d) : d.minmax),
-          size = (typeof(size) === "function" ? size(d) : d.size);
+          size = (typeof(size) === "function" ? size(d) : d.size),
+          unit_circle_val = (typeof(unit_circle) === "function" ? unit_circle(d) : unit_circle);
       
       // chart sizes
       var width = size['width'] - margin.left - margin.right,
@@ -65,6 +67,21 @@ d3.scatterplotwithlineplot = function() {
         lines[k].path =[corners(lines[k],limits,way),corners(lines[k],limits,-1*way)];
       }
       
+      //ellipse ~ unit_circle
+      if (unit_circle_val) {
+          element.selectAll(".ellipse")
+              .data([0])
+            .enter()
+              .append("ellipse")
+                .attr("cx", xScale(0))
+                .attr("cy", yScale(0))
+                .attr("rx", Math.abs(xScale(1)-xScale(0)))
+                .attr("ry", Math.abs(yScale(1)-yScale(0)))
+                .attr("fill-opacity",0)
+                .attr("stroke","red")
+                .style("stroke-dasharray", ("10,3"));
+      }
+      
       //lines
       var line = element.selectAll ('.line')
          .data(lines)
@@ -110,6 +127,7 @@ d3.scatterplotwithlineplot = function() {
 		   .attr("fill-opacity",0.33)
 		   .on('mouseover', tip.show)
            .on('mouseout', tip.hide);
+     
 	
       //axis labels
 	  element.append("text")
@@ -190,7 +208,11 @@ d3.scatterplotwithlineplot = function() {
     size = value;
     return scatterplotwithlineplot;
   };
-  
+  scatterplotwithlineplot.unit_circle = function(value) {
+    if (!arguments.length) return value;
+    unit_circle = value;
+    return scatterplotwithlineplot;
+  };
   return scatterplotwithlineplot;
   
   
