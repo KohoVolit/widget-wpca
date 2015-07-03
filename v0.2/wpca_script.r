@@ -24,6 +24,7 @@ X_source$option_numeric[X_source$option=='no'] = -1
 X_source$option_numeric[X_source$option=='abstain'] = -1    #may be 0 in some parliaments
 X_source$option_numeric[X_source$option=='not voting'] = -1
 X_source$option_numeric[X_source$option=='absent'] = NA
+X_source$option_numeric[X_source$option=='paired'] = NA
 X_source$option_numeric = as.numeric(X_source$option_numeric)
 
 #prevent reordering, which is behaviour of acast:
