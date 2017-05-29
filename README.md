@@ -1,7 +1,7 @@
 # Widget: W-PCA
 Widget for calculation of WPCA and creation of its chart, possibly with the cutting lines.
 
-![picture] (https://raw.githubusercontent.com/KohoVolit/widget-wpca/master/examples/scatterplot-chart.png "Example")
+![picture](https://raw.githubusercontent.com/KohoVolit/widget-wpca/master/examples/scatterplot-chart.png "Example")
 
 [WPCA procedure (in R) is described here](https://gist.github.com/michalskop/8514867)
 
@@ -81,7 +81,7 @@ The 2nd and 3rd parameters may be ommited (defaults to `1|1`).
 
 Default: no rotation
 
-Examples: `rotation=2|-1|1` (the voter with 2 will be left and up) , `rotation=2` (equals to `rotation=2|1|1)
+Examples: `rotation=2|-1|1` (the voter with 2 will be left and up) , `rotation=2` (equals to `rotation=2|1|1`)
 
 ### dim1, dim2 (optional)
 Sets names for axes
@@ -89,7 +89,7 @@ Sets names for axes
 Default: depending on `lang` (*Dimension 1* and *Dimension 2* in English)
 
 ## Examples
-###Example resource
+### Example resource
 There is an example of helper Python script (`load_datapackage.cgi`) converting `datapackage` into required json resource in the `/examples/cgi` directory. (This script usually needs to be placed in `/var/www/cgi-bin/` directory.)
 
 The example of `datapackage` with 3 `csv` file is also in `/examples` directory.
